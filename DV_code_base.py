@@ -132,6 +132,16 @@ def main(what_plot = 1 , df = None ):
         plt.show()
     #Ridge plot
     if what_plot == 8 :
+        plt.style.use('fast')# fast is the best 
+        # now this is the list with all the styles : 
+        #['bmh', 'classic', 'dark_background', 'fast', 'fivethirtyeight', 'ggplot', 
+        # 'grayscale', 'seaborn-bright', 'seaborn-colorblind', 'seaborn-dark-palette', 
+        # 'seaborn-dark', 'seaborn-darkgrid', 'seaborn-deep', 'seaborn-muted', 
+        # 'seaborn-notebook', 
+        # 'seaborn-paper', 'seaborn-pastel', 'seaborn-poster', 'seaborn-talk', 
+        # 'seaborn-ticks', 'seaborn-whitegrid', 'seaborn-white', 'Solarize_Light2',
+        #  '_classic_test_patch']
+
         plt.figure()
         sns.kdeplot(df.cont_skew , fill = True , bw_method='scott' , color='purple' ) #bw_method --> 'scott' , 'silverman'
         
@@ -140,27 +150,125 @@ def main(what_plot = 1 , df = None ):
         plt.xlabel('val')
         plt.ylabel('Density')
         
-        plt.style.use('classic')
+       
+        sns.despine()
 
         plt.show()
     #Line plot
     if what_plot == 9 :
+        plt.style.use('fast')
         plt.figure()
-        sns.lineplot(x = range(len(df.cont_skew)), y = df.cont_skew , color = 'blue')
+        sns.lineplot(x = range(len(df.cont_norm)), y = df.cont_skew , color = 'black')
         
         plt.title('Line Plot')
         
         plt.xlabel('Index')
         plt.ylabel('val')
         
-        plt.style.use('classic')
+        sns.despine()
 
         plt.show()
+###################### part 3 
+    #bar plot and its ver (cat data)
+    #normal
+    if what_plot == 10:
+        plt.style.use('fast')
+        plt.figure()
+
+        sns.countplot(x=df.segment, palette='Set2' , order = df.segment.value_counts().index)  
+
+        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
+        
+        plt.title('TTTT')
+        plt.xlabel('segment')
+        plt.ylabel('Count')
+
+        sns.despine()
+        plt.show()
+        ############## horziontal 
+        plt.style.use('fast')
+        plt.figure()
+
+        sns.countplot(y=df.segment, palette='Set2' , order = df.segment.value_counts().index)  
+
+        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
+        
+        plt.title('TTTT')
+        plt.xlabel('segment')
+        plt.ylabel('Count')
+
+        sns.despine()
+        plt.show()
+        
+        return
+    #stacked <BAD>
+    if what_plot == 11:
+        plt.style.use('fast')
+        plt.figure()
+        sns.countplot(x=df.segment)
+
+        plt.title('TTTT')
+        plt.xlabel('segment')
+        plt.ylabel('Count')
+
+        sns.despine()
+
+        plt.show()
+
+        return
+    #side by side (dodged)
+    if what_plot == 12:
+        plt.style.use('fast')
+        plt.figure()
+        
+        sns.countplot(x=df.segment,
+                       hue = df.education ,width=0.8 , 
+                       palette='Set1' , order = df.segment.value_counts().index)  
+        
+        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
+        
+        plt.title('TTTT')
+        plt.xlabel('segment')
+        plt.ylabel('Count')
+
+        sns.despine()
+        plt.show()
+        return
+    #pareto
+    if what_plot == 130000:
+        
+        return
+    #Lollipop<bad>
+    if what_plot == 13:
+        plt.style.use('fast')
+        plt.figure()
+        segment_counts = df.segment.value_counts().sort_values(ascending=False)
+        plt.stem(segment_counts.index, segment_counts.values, basefmt=" ", use_line_collection=True ) 
+        plt.title('Lollipop Plot')
+        plt.xlabel('Segment')
+        plt.ylabel('Count')
+        sns.despine()
+        plt.show()
+        return
+#
+###############################
+##############################
+#BIVARIATE PLOTS
+    #scatter plot
+    if what_plot == 14:
+        pass
+    #palettes / colorsBrewer
+    if what_plot == 15:
+        pass
+    #heatmap
+    if what_plot == 16:
+        pass
     return
 
 
+
 if __name__ == "__main__":
-    plot = 8
+    plot = 13
     print('starting !!!')
     np.random.seed(42)
 
