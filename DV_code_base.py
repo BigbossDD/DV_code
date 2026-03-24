@@ -177,7 +177,6 @@ def main(what_plot = 1 , df = None ):
 
         sns.countplot(x=df.segment, palette='Set2' , order = df.segment.value_counts().index)  
 
-        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
         
         plt.title('TTTT')
         plt.xlabel('segment')
@@ -191,7 +190,6 @@ def main(what_plot = 1 , df = None ):
 
         sns.countplot(y=df.segment, palette='Set2' , order = df.segment.value_counts().index)  
 
-        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
         
         plt.title('TTTT')
         plt.xlabel('segment')
@@ -201,7 +199,7 @@ def main(what_plot = 1 , df = None ):
         plt.show()
         
         return
-    #stacked <BAD>
+    #stacked <BAD> <IGNORE>
     if what_plot == 11:
         plt.style.use('fast')
         plt.figure()
@@ -225,7 +223,6 @@ def main(what_plot = 1 , df = None ):
                        hue = df.education ,width=0.8 , 
                        palette='Set1' , order = df.segment.value_counts().index)  
         
-        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
         
         plt.title('TTTT')
         plt.xlabel('segment')
@@ -238,87 +235,121 @@ def main(what_plot = 1 , df = None ):
     if what_plot == 130000:
         
         return
-    #Lollipop<bad>
+    #Lollipop
     if what_plot == 13:
         plt.style.use('fast')
         plt.figure()
-        segment_counts = df.segment.value_counts().sort_values(ascending=False)
-        plt.stem(segment_counts.index, segment_counts.values, basefmt=" ", use_line_collection=True ) 
-        plt.title('Lollipop Plot')
+
+        counts = df['segment'].value_counts().sort_values(ascending=False)
+
+        #plt.vlines(counts.index, 0, counts.values, color='steelblue', linewidth=2)   # fix: use vlines not stem OR hlines as to get it horizontal 
+        #plt.plot(counts.index, counts.values, 'o', color='steelblue', markersize=8)  # fix: dots on top and when H just switch these places 
+
+        plt.hlines(df['segment'].value_counts().sort_values(ascending=False).index , 0, df['segment'].value_counts().sort_values(ascending=False).values, color='steelblue', linewidth=2)   # fix: use vlines not stem OR hlines as to get it horizontal 
+        plt.plot( df['segment'].value_counts().sort_values(ascending=False).values,df['segment'].value_counts().sort_values(ascending=False).index, 'o', color='steelblue', markersize=8)  # fix: dots on top
+
+        plt.title('Lollipop Plot - Segment')
         plt.xlabel('Segment')
         plt.ylabel('Count')
         sns.despine()
+        
         plt.show()
-        return
-#
+    #
 ###############################
 ##############################
 #BIVARIATE PLOTS
     #scatter plot
+    #basic
     if what_plot == 14:
+        plt.style.use('fast')
+        plt.figure()
+        plt.scatter(
+            x = df.cont_norm,
+            y = df.spend,
+            
+            alpha=0.5,
+            edgecolors='none'
+        )
+        plt.show()
+        ######
+        #here with a line 
+        plt.style.use('fast')
+        plt.figure()
+        plt.scatter(
+            x = df.cont_norm,
+            y = df.spend,
+            
+            alpha=0.5,
+            edgecolors='none'
+        )
+        plt.show()
+
+
+
+
         pass
-    #palettes / colorsBrewer
-    if what_plot == 15:
-        pass
+    
     #heatmap
-    if what_plot == 16:
+    if what_plot == 15:
         pass
     return
 
+def useful_thing():
+    #palettes / colorsBrewer
+    #a more better way to stander the color when like bar plot
+    
+        #palette --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
+    ##############################
+    # bins are gotten via an equation 
+    #as well as band width
 
 
+    pass
+plot = 13
 if __name__ == "__main__":
-    plot = 13
-    print('starting !!!')
+    
+   
     np.random.seed(42)
-
     n = 500
 
-    # cont_norm
+    # Base variables
     cont_norm = np.random.normal(0, 1, n)
-
-    # cont_skew (log-normal distribution)
     cont_skew = np.random.lognormal(0, 0.6, n)
 
-    # cont_out (normal data with 5 outliers)
-    x = np.concatenate([
-        np.random.normal(5, 1, n - 5),
-        np.random.normal(12, 0.5, 5)
-    ])
+    x = np.concatenate([np.random.normal(5, 1, n - 5), np.random.normal(12, 0.5, 5)])
     np.random.shuffle(x)
     cont_out = x
 
-    # visits (Poisson)
     visits = np.random.poisson(3, n)
 
-    # segment (categorical with probabilities)
-    segment = np.random.choice(
-        ["A", "B", "C"],
-        size=n,
-        p=[0.5, 0.3, 0.2]
-    )
+    segment = np.random.choice(["A", "B", "C"], size=n, p=[0.5, 0.3, 0.2])
 
-    # education (ordered categorical)
     education_levels = ["High school", "Bachelor", "Master", "PhD"]
-    education = np.random.choice(
-        education_levels,
-        size=n,
-        p=[0.3, 0.4, 0.2, 0.1]
-    )
-
     education = pd.Categorical(
-        education,
+        np.random.choice(education_levels, size=n, p=[0.3, 0.4, 0.2, 0.1]),
         categories=education_levels,
         ordered=True
     )
 
-    # Create DataFrame
     df = pd.DataFrame({
+        "id":        np.arange(1, n + 1),
         "cont_norm": cont_norm,
         "cont_skew": cont_skew,
-        "cont_out": cont_out,
-        "visits": visits,
-        "segment": segment,
+        "cont_out":  cont_out,
+        "visits":    visits,
+        "segment":   segment,
         "education": education
     })
+
+    # Derived / mutated variables
+    df["spend"]      = 120 + 18 * df["cont_norm"] + 7 * df["visits"] + np.random.normal(0, 15, n)
+
+    df["score"]      = 65 + 8 * df["cont_norm"] - 4 * np.log1p(df["cont_skew"]) + np.random.normal(0, 6, n)
+
+    df["engagement"] = 40 + 3 * df["visits"] + 2 * df["cont_norm"] + np.random.normal(0, 5, n)
+
+    # scale() in R standardizes to mean=0, std=1 — equivalent to scipy zscore or manual
+    cont_out_scaled  = (df["cont_out"] - df["cont_out"].mean()) / df["cont_out"].std()
+    visits_scaled    = (df["visits"]   - df["visits"].mean())   / df["visits"].std()
+    df["risk_index"] = 0.5 * cont_out_scaled + 0.4 * visits_scaled + np.random.normal(0, 0.6, n)
     main(plot , df )
