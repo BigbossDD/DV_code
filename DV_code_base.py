@@ -258,6 +258,7 @@ def main(what_plot = 1 , df = None ):
 ###############################
 ##############################
 #BIVARIATE PLOTS
+#num x num 
     #scatter plot
     #basic
     if what_plot == 14:
@@ -282,8 +283,39 @@ def main(what_plot = 1 , df = None ):
             alpha=0.5,
             edgecolors='none'
         )
+        sns.regplot(x=df.cont_norm, y=df.spend, scatter=False, color='red')  # Add a regression line , basicly another plot 
         plt.show()
-
+        # a polynomial line
+        plt.style.use('fast')
+        plt.figure()
+        plt.scatter(
+            x = df.cont_norm,
+            y = df.spend,
+            
+            alpha=0.5,
+            edgecolors='none'
+        )
+        sns.regplot(x=df.cont_norm, y=df.spend, scatter=False, color='red' , order = 2)  # remember ML and how we upped the degree of the poly 
+        # so now it is in par 'order' 
+        plt.show()
+        ###############
+        # now a diffrent style is the hexbin plot which is like a 2D histogram and it is good for large datasets 
+        plt.style.use('fast')
+        plt.figure()
+        plt.hexbin(x=df.cont_norm, y=df.spend, gridsize=30, cmap='Blues', edgecolors='none')  # cmap --> 'Blues' , 'Greens' , 'Reds' , 'Purples' , 'Oranges'
+        plt.colorbar(label='Count in bin')
+        plt.title('Hexbin Plot')
+        plt.xlabel('cont_norm')
+        plt.ylabel('spend')
+        plt.show()
+        #2d 
+        plt.style.use('fast')
+        plt.figure()
+        sns.kdeplot(x=df.cont_norm, y=df.spend, fill=True, cmap='Blues', bw_method='scott')  # cmap --> 'Blues' , 'Greens' , 'Reds' , 'Purples' , 'Oranges' , bw_method --> 'scott' , 'silverman'
+        plt.title('2D Density Plot')
+        plt.xlabel('cont_norm')
+        plt.ylabel('spend')
+        plt.show()
 
 
 
@@ -291,8 +323,33 @@ def main(what_plot = 1 , df = None ):
     
     #heatmap
     if what_plot == 15:
+        plt.style.use('fast')
+        plt.figure()
+        #first make the corr matrix 
+        corr_matrix = df[['cont_out', 'spend' , 'cont_norm' , 'score']].corr()
+
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', linewidths=0.5 ) # cmap --> 'coolwarm' , 'viridis' , 'plasma' , 'inferno' , 'magma'
+
+        plt.title('Correlation Heatmap') 
+        plt.show()
         pass
-    return
+    #####################
+    # use less of it 
+    #now to pie chart
+    if what_plot == 16:
+        plt.style.use('fast')
+        plt.figure()
+        segment_counts = df['segment'].value_counts()
+        plt.pie(segment_counts, labels=segment_counts.index, autopct='%1.1f%%', startangle=90, # to be clockwise
+                colors=sns.color_palette('Set2', len(segment_counts)) # color
+                 ,counterclock=False) # orderedd
+         # and we want it to be clockwise so we can add the start angle and make it 90   & ordered 
+        # colors --> 'Set1' , 'Set2' , 'Set3' , 'Pastel1' , 'Pastel2' , 'Dark2' , 'Accent'
+        plt.title('Segment Distribution')
+        
+        plt.show()
+        pass
+    
 
 def useful_thing():
     #palettes / colorsBrewer
@@ -305,7 +362,7 @@ def useful_thing():
 
 
     pass
-plot = 13
+plot = 16
 if __name__ == "__main__":
     
    
