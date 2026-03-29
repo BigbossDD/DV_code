@@ -333,6 +333,23 @@ def main(what_plot = 1 , df = None ):
         plt.title('Correlation Heatmap') 
         plt.show()
         pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ################################
+    ####not much used things  section 
     #####################
     # use less of it 
     #now to pie chart
