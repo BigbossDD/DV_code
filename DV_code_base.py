@@ -366,6 +366,40 @@ def main(what_plot = 1 , df = None ):
         
         plt.show()
         pass
+    ###########################################
+    ######################
+    ### MISC knowledge 
+    # percentage labels on bar plot
+    import matplotlib.ticker as mtick
+    if what_plot == 17:
+        plt.figure(figsize=(8,5))
+
+        # get counts
+        counts = df['segment'].value_counts() #NOTE
+        total = counts.sum() #NOTE
+
+        # plot
+        ax = sns.countplot(
+            x='segment',
+            data=df,
+            order=counts.index,
+            palette='Set2'
+        )
+
+        # add percentage labels
+        for container in ax.containers:             #NOTE
+            labels = [f'{(v/total):.1%}' for v in container.datavalues] #NOTE 
+            ax.bar_label(container, labels=labels, padding=3) #NOTE 
+
+        plt.title('Segment Distribution (%)')
+        plt.xlabel('Segment')
+        plt.ylabel('Count')
+
+        # clean numbers (optional)
+        ax.yaxis.set_major_formatter(mtick.StrMethodFormatter('{x:,.0f}')) #NOTE
+
+        plt.show()
+        pass
     
 
 def useful_thing():
@@ -379,7 +413,7 @@ def useful_thing():
 
 
     pass
-plot = 16
+plot = 17
 if __name__ == "__main__":
     
    
