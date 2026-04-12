@@ -12,7 +12,7 @@ def main(what_plot = 1 , df = None ):
     if what_plot == 1:
         #normal plot
         plt.figure()
-        sns.histplot(df.cont_skew , bins = 'fd'  , kde = True)#bins --> 'fd' , 'scott' 
+        sns.histplot(df.cont_skew , bins = 'auto'  , kde = True)#bins --> 'fd' , 'scott' 
         
         plt.title('normal')
         
@@ -25,7 +25,7 @@ def main(what_plot = 1 , df = None ):
         plt.figure()
         sns.histplot(df.cont_skew , bins = 'scott'  , kde = True)
 
-        plt.title('normal')
+        plt.title('normal :')
         
         plt.xlabel('val')
         plt.ylabel('count')
@@ -35,7 +35,8 @@ def main(what_plot = 1 , df = None ):
         plt.legend()
 
         plt.style.use('classic')
-        
+        # saving the plot 
+        plt.savefig('histogram.png' , dpi = 300) #dpi --> resolution of the image
         plt.show()
 
     #Density Plot   
@@ -43,7 +44,7 @@ def main(what_plot = 1 , df = None ):
     if what_plot == 2:
         #normal
         plt.figure()
-        sns.kdeplot(df.cont_skew , fill = True , bw_method='scott' , color='purple' ) #bw_method --> 'scott' , 'silverman'
+        sns.kdeplot(df.cont_skew , fill = True , bw_method='' , color='purple' ) #bw_method --> 'scott' , 'silverman' , or for automatic : 
         
         plt.title('Density Plot')
         
@@ -76,7 +77,8 @@ def main(what_plot = 1 , df = None ):
     if what_plot == 4 : 
         from scipy import stats
         plt.figure()
-        stats.probplot(df.cont_skew , dist = 'norm' , plot = plt)
+        stats.probplot(df.cont_skew , dist = 'norm' , plot = plt) # dist --> 'norm' ,
+       # 'expon' , 'lognorm' , 'weibull_min' , 'weibull_max' , 'gamma' , 'beta' , 'cauchy' , 'laplace' , 'gumbel_r' , 'gumbel_l'
         
         plt.title('Q-Q Plot')
         
@@ -104,21 +106,79 @@ def main(what_plot = 1 , df = None ):
         plt.style.use('classic')
 
         plt.show()
+        ############
+        plt.style.use('classic')
+        plt.figure(figsize=(8, 3))
+
+        sns.boxplot(
+            x=df.cont_out,
+            color='cyan',
+            showfliers=True,
+            width=0.4
+            ,notch=True
+            ,boxprops=dict(alpha=0.7)
+            ,flierprops=dict(marker='o', color='red', alpha=0.5)
+            ,medianprops=dict(color='blue', linewidth=2)
+            ,whiskerprops=dict(color='magenta', linewidth=1.5)
+            ,capprops=dict(color='magenta', linewidth=1.5)
+            ,showmeans=True, meanprops=dict(marker='D', color='orange', alpha=0.7)
+        )
+
+        # Mean line
+        mean_val = df.cont_out.mean()
+        plt.axvline(mean_val, color='red', linestyle='--', label='Mean')
+
+        # Median line (important!)
+        median_val = df.cont_out.median()
+        plt.axvline(median_val, color='blue', linestyle='-', label='Median')
+
+        plt.title('better style ')
+        plt.xlabel('Value')
+        
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
     #violin plot
     if what_plot == 6 :
         plt.figure()
-        sns.violinplot(x = df.cont_skew , color = 'red'  ,bw_method= 'silverman' ) #bw_method --> 'scott' , 'silverman'
+        sns.violinplot(x = df.cont_skew , color = 'lightblue'  ,bw_method= 'silverman' ) #bw_method --> 'scott' , 'silverman'
         
         plt.title('Violin Plot')
         
         plt.xlabel('val')
         plt.ylabel('')
 
-        plt.style.use('classic')
-
         plt.show()
-    #beeswarm plot
+        
+        sns.set_theme(style="whitegrid")
+
+        #plt.style.use('classic')
+        plt.figure(figsize=(8, 4))
+
+        sns.violinplot(
+            x=df.cont_skew,
+            color='lightgray',
+            bw_method='silverman', # bw_method --> 'scott' , 'silverman'
+            inner='quartile'  # shows median + quartiles
+            
+
+            ,cut=0  # cut=0 to limit the tails to the data range
+            , bw_adjust=0.5  # adjust bandwidth for smoother or more detailed plot
+        )
+
+        # Add mean line
+        mean_val = df.cont_skew.mean()
+        plt.axvline(mean_val, color='red', linestyle='--', label='Mean')
+
+        plt.title('Violin Plot of cont_skew')
+        plt.xlabel('Value')
+
+        plt.legend()
+        sns.despine()
+        plt.show()
+    #beeswarm plotS
     if what_plot == 7 :
+        sns.set_theme(style="whitegrid")
         plt.figure()
         sns.swarmplot(x = df.cont_skew , color = 'magenta')
         
@@ -127,8 +187,11 @@ def main(what_plot = 1 , df = None ):
         plt.xlabel('val')
         plt.ylabel('')
 
-        plt.style.use('classic')
+        plt.axvline(df.cont_skew.mean(), color='red', linestyle='-.', label='Mean' , alpha = 0.7)
 
+     
+        sns.despine()
+        plt.tight_layout()
         plt.show()
     #Ridge plot
     if what_plot == 8 :
@@ -168,6 +231,30 @@ def main(what_plot = 1 , df = None ):
         sns.despine()
 
         plt.show()
+        #########
+        plt.style.use('default')   # better than 'fast' for readability
+        plt.figure(figsize=(9, 4))
+
+        x = range(len(df.cont_norm))
+        y = df.cont_skew
+        # Add mean reference line
+        mean_val = y.mean()
+        plt.axhline(mean_val, color='red', linestyle='--', label='Mean')
+
+        # Optional: highlight trend (rolling average)
+        rolling = y.rolling(window=250).mean()
+        plt.plot(x, rolling, color='blue', linewidth=2, label='Rolling Mean')
+
+        plt.title('Trend of cont_skew over Index')
+        plt.xlabel('Index')
+        plt.ylabel('Value')
+
+        plt.grid(alpha=0.3)
+        sns.despine()
+
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
 ###################### part 3 
     #bar plot and its ver (cat data)
     #normal
@@ -184,6 +271,7 @@ def main(what_plot = 1 , df = None ):
 
         sns.despine()
         plt.show()
+
         ############## horziontal 
         plt.style.use('fast')
         plt.figure()
@@ -203,7 +291,7 @@ def main(what_plot = 1 , df = None ):
     if what_plot == 11:
         plt.style.use('fast')
         plt.figure()
-        sns.countplot(x=df.segment)
+        sns.countplot(x=df.segment , y = df.education )
 
         plt.title('TTTT')
         plt.xlabel('segment')
@@ -245,8 +333,12 @@ def main(what_plot = 1 , df = None ):
         #plt.vlines(counts.index, 0, counts.values, color='steelblue', linewidth=2)   # fix: use vlines not stem OR hlines as to get it horizontal 
         #plt.plot(counts.index, counts.values, 'o', color='steelblue', markersize=8)  # fix: dots on top and when H just switch these places 
 
-        plt.hlines(df['segment'].value_counts().sort_values(ascending=False).index , 0, df['segment'].value_counts().sort_values(ascending=False).values, color='steelblue', linewidth=2)   # fix: use vlines not stem OR hlines as to get it horizontal 
-        plt.plot( df['segment'].value_counts().sort_values(ascending=False).values,df['segment'].value_counts().sort_values(ascending=False).index, 'o', color='steelblue', markersize=8)  # fix: dots on top
+        plt.hlines(df['segment'].value_counts().sort_values(ascending=False).index  , 
+                   0,  df['segment'].value_counts().sort_values(ascending=False).values
+                   , color='steelblue', linewidth=2)   # fix: use vlines not stem OR hlines as to get it horizontal 
+        plt.plot( df['segment'].value_counts().sort_values(ascending=False).values 
+                 ,df['segment'].value_counts().sort_values(ascending=False).index, 
+                 'o', color='steelblue', markersize=8)  # fix: dots on top
 
         plt.title('Lollipop Plot - Segment')
         plt.xlabel('Segment')
@@ -255,6 +347,69 @@ def main(what_plot = 1 , df = None ):
         
         plt.show()
     #
+
+    if what_plot == 101: # this to add the count and %  ontop of the plot : 
+            sns.set_theme(style="whitegrid")
+            plt.figure(figsize=(8, 4))
+
+            ax = sns.countplot(
+                x=df.segment,
+                palette='Set2',
+                order=df.segment.value_counts().index
+            )
+
+            # Add values on top of each bar
+            total_count = len(df.segment)
+            for p in ax.patches:
+                height = p.get_height()
+                ax.annotate(
+                    f'{int(height)}',
+                    (p.get_x() + p.get_width() / 2, height),
+                    ha='center',
+                    va='bottom'
+                )
+
+   
+            plt.title('Count of Segments')
+            plt.xlabel('Segment')
+            plt.ylabel('Count')
+
+            plt.grid(axis='y', alpha=0.3) # this so the grid is less visible 
+            
+            sns.despine()
+            plt.tight_layout()
+            plt.show()
+#################
+            sns.set_theme(style="whitegrid")
+            plt.figure(figsize=(8, 4))
+
+            ax = sns.countplot(
+                x=df.segment,
+                palette='Set2',
+                order=df.segment.value_counts().index
+            )
+
+            # Add values on top of each bar
+            total_count = len(df.segment)
+            for p in ax.patches:
+                height = p.get_height()
+                ax.annotate(
+                    f'{float(height/total_count) * 100} %',
+                    (p.get_x() + p.get_width() / 2, height),
+                    ha='center',
+                    va='bottom'
+                )
+
+   
+            plt.title('Count of Segments')
+            plt.xlabel('Segment')
+            plt.ylabel('Count')
+
+            plt.grid(axis='y', alpha=0.3) # this so the grid is less visible 
+            
+            sns.despine()
+            plt.tight_layout()
+            plt.show()
 ###############################
 ##############################
 #BIVARIATE PLOTS
@@ -329,6 +484,8 @@ def main(what_plot = 1 , df = None ):
         corr_matrix = df[['cont_out', 'spend' , 'cont_norm' , 'score']].corr()
 
         sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', linewidths=0.5 ) # cmap --> 'coolwarm' , 'viridis' , 'plasma' , 'inferno' , 'magma'
+        plt.xticks(rotation=45) # to rotate the x labels
+        plt.yticks(rotation=0) # to keep the y labels horizontal
 
         plt.title('Correlation Heatmap') 
         plt.show()
@@ -413,7 +570,7 @@ def useful_thing():
 
 
     pass
-plot = 17
+plot = 15
 if __name__ == "__main__":
     
    
